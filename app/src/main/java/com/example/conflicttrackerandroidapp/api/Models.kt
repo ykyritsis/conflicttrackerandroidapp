@@ -24,3 +24,41 @@ data class ConflictEvent(
     val notes: String,
     val fatalities: Int
 ) : Parcelable
+
+data class CountryStats(
+    val population: Double?,
+    val gdp: Double?,
+    val militaryExpenditure: Double?,
+    val globalAvgPopulation: Double = 67000000.0,
+    val globalAvgGDP: Double = 1300000000000.0,
+    val globalAvgMilitary: Double = 25000000000.0
+) {
+    fun getPopulationComparison(): String {
+        return population?.let {
+            val percentage = ((it - globalAvgPopulation) / globalAvgPopulation * 100)
+            formatComparison(percentage)
+        } ?: "No comparison available"
+    }
+
+    fun getGDPComparison(): String {
+        return gdp?.let {
+            val percentage = ((it - globalAvgGDP) / globalAvgGDP * 100)
+            formatComparison(percentage)
+        } ?: "No comparison available"
+    }
+
+    fun getMilitaryComparison(): String {
+        return militaryExpenditure?.let {
+            val percentage = ((it - globalAvgMilitary) / globalAvgMilitary * 100)
+            formatComparison(percentage)
+        } ?: "No comparison available"
+    }
+
+    private fun formatComparison(percentage: Double): String {
+        return when {
+            percentage > 0 -> "${String.format("%.1f", percentage)}% higher than global average"
+            percentage < 0 -> "${String.format("%.1f", -percentage)}% lower than global average"
+            else -> "Equal to global average"
+        }
+    }
+}

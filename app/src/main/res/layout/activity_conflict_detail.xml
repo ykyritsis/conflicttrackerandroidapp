@@ -166,43 +166,78 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <!-- Update the statsContent section in activity_conflict_detail.xml -->
                 <LinearLayout
                     android:id="@+id/statsContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/countryPopulation"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@color/text_primary"
-                        android:fontFamily="-apple-system-thin"/>
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp">
 
-                    <TextView
-                        android:id="@+id/countryGDP"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/text_primary"
-                        android:fontFamily="-apple-system-thin"/>
+                        <TextView
+                            android:id="@+id/countryPopulation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="-apple-system-thin"/>
 
-                    <TextView
-                        android:id="@+id/countryGDPPerCapita"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/text_primary"
-                        android:fontFamily="-apple-system-thin"/>
+                        <TextView
+                            android:id="@+id/populationComparison"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:fontFamily="-apple-system-thin"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/countryLifeExpectancy"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/text_primary"
-                        android:fontFamily="-apple-system-thin"/>
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:id="@+id/countryGDP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="-apple-system-thin"/>
+
+                        <TextView
+                            android:id="@+id/gdpComparison"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:fontFamily="-apple-system-thin"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp">
+
+                        <TextView
+                            android:id="@+id/militaryExpenditure"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_primary"
+                            android:fontFamily="-apple-system-thin"/>
+
+                        <TextView
+                            android:id="@+id/militaryComparison"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary"
+                            android:fontFamily="-apple-system-thin"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <ProgressBar
