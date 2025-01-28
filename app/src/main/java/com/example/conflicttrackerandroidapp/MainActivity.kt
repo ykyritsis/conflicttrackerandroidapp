@@ -1,20 +1,31 @@
 package com.example.conflicttrackerandroidapp
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.os.Bundle
+import android.widget.Toast
+import com.google.android.material.card.MaterialCardView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Find our cards by their IDs
+        val mapCard = findViewById<MaterialCardView>(R.id.mapCard)
+        val escalatingCard = findViewById<MaterialCardView>(R.id.escalatingCard)
+        val watchlistCard = findViewById<MaterialCardView>(R.id.watchlistCard)
+
+        // Set click listeners for each card
+        mapCard.setOnClickListener {
+            Toast.makeText(this, "Map View Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        escalatingCard.setOnClickListener {
+            Toast.makeText(this, "Escalating Conflicts Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        watchlistCard.setOnClickListener {
+            Toast.makeText(this, "Conflict Watchlist Clicked", Toast.LENGTH_SHORT).show()
         }
     }
 }
