@@ -1,31 +1,55 @@
 package com.example.conflicttrackerandroidapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.card.MaterialCardView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.conflicttrackerandroidapp.api.ConflictEvent
+import com.example.conflicttrackerandroidapp.api.ConflictRepository
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private val repository = ConflictRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Find our cards by their IDs
-        val mapCard = findViewById<MaterialCardView>(R.id.mapCard)
-        val escalatingCard = findViewById<MaterialCardView>(R.id.escalatingCard)
-        val watchlistCard = findViewById<MaterialCardView>(R.id.watchlistCard)
+        // Set up RecyclerView
+        val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Set click listeners for each card
-        mapCard.setOnClickListener {
-            Toast.makeText(this, "Map View Clicked", Toast.LENGTH_SHORT).show()
-        }
+        // Load data
+        loadConflictData()
+    }
 
-        escalatingCard.setOnClickListener {
-            Toast.makeText(this, "Escalating Conflicts Clicked", Toast.LENGTH_SHORT).show()
-        }
+    private fun loadConflictData() {
+        lifecycleScope.launch {
+            try {
+                // Load most severe recent conflict
+                val severeConflict = repository.getMostSevereRecentConflict()
+                severeConflict?.let { updateEscalatingCard(it) }
 
-        watchlistCard.setOnClickListener {
-            Toast.makeText(this, "Conflict Watchlist Clicked", Toast.LENGTH_SHORT).show()
+                // Load top ongoing conflicts
+                val topConflicts = repository.getTopOngoingConflicts()
+                updateWatchlistCard(topConflicts)
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Error loading data", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun updateEscalatingCard(conflict: ConflictEvent) {
+        findViewById<TextView>(R.id.escalatingLocation).text = "${conflict.country} - ${conflict.event_type}"
+        findViewById<TextView>(R.id.escalatingFatalities).text = "${conflict.fatalities} casualties"
+        findViewById<TextView>(R.id.escalatingDate).text = "Date: ${conflict.event_date}"
+    }
+
+    private fun updateWatchlistCard(conflicts: List<ConflictEvent>) {
+        val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
+        recyclerView.adapter = ConflictAdapter(conflicts)
     }
 }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/system_background">
 
     <!-- Title -->
     <TextView
@@ -11,9 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Conflict Tracker"
-        android:textSize="28sp"
+        android:textSize="34sp"
         android:textColor="@color/text_primary"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="-apple-system"
+        android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.3">
+        app:layout_constraintHeight_percent="0.35">
 
         <View
             android:layout_width="match_parent"
@@ -44,14 +46,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Map View"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textColor="@color/text_secondary"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="-apple-system"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/mapCard"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Escalating Conflicts Card -->
+    <!-- Escalating Conflict Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/escalatingCard"
         android:layout_width="0dp"
@@ -62,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/mapViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/watchlistCard"
-        app:layout_constraintHeight_percent="0.25">
+        app:layout_constraintBottom_toTopOf="@id/watermark">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,18 +76,39 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Escalating Conflicts"
-                android:textSize="18sp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="sans-serif-medium"/>
+                android:text="Escalating Conflict"
+                style="@style/CardTitle"/>
 
             <TextView
+                android:id="@+id/escalatingLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recent updates"
-                android:textSize="14sp"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:fontFamily="-apple-system"
+                android:layout_marginTop="12dp"
+                android:text="Loading location..."/>
+
+            <TextView
+                android:id="@+id/escalatingFatalities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/system_red"
+                android:textSize="22sp"
+                android:fontFamily="-apple-system"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:text="--"/>
+
+            <TextView
+                android:id="@+id/escalatingDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"/>
+                android:textSize="13sp"
+                android:fontFamily="-apple-system"
+                android:layout_marginTop="4dp"
+                android:text="Loading date..."/>
 
         </LinearLayout>
 
@@ -101,7 +125,7 @@
         app:layout_constraintTop_toBottomOf="@id/mapViewTitle"
         app:layout_constraintStart_toEndOf="@id/escalatingCard"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.25">
+        app:layout_constraintBottom_toTopOf="@id/watermark">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,17 +137,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Conflict Watchlist"
-                android:textSize="18sp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="sans-serif-medium"/>
+                style="@style/CardTitle"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Monitored regions"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/watchlistRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"/>
 
         </LinearLayout>
 
@@ -131,12 +153,13 @@
 
     <!-- Watermark -->
     <TextView
+        android:id="@+id/watermark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ioannis Kyritsis 2025"
-        android:textSize="12sp"
-        android:textColor="@color/text_secondary"
-        android:fontFamily="sans-serif-light"
+        android:textSize="13sp"
+        android:textColor="@color/text_tertiary"
+        android:fontFamily="-apple-system"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
