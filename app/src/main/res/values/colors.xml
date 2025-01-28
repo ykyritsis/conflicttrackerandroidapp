@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Apple-style colors -->
-    <color name="system_blue">#FF007AFF</color>
-    <color name="system_background">#FFF2F2F7</color>
-    <color name="card_background">#FFFFFFFF</color>
+    <color name="background_grey">#FFF8F9FA</color>
+    <color name="white">#FFFFFFFF</color>
     <color name="text_primary">#FF000000</color>
-    <color name="text_secondary">#FF6E6E73</color>
-    <color name="text_tertiary">#FFA1A1A6</color>
+    <color name="text_secondary">#99000000</color>
+    <color name="text_tertiary">#61000000</color>
+    <color name="indigo">#FF4B0082</color>
     <color name="system_red">#FFFF3B30</color>
-    <color name="divider">#FFE5E5EA</color>
+    <color name="divider">#1F000000</color>
 </resources>

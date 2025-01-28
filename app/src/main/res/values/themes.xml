@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.ConflictTrackerAndroidApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/system_background</item>
-        <item name="android:statusBarColor">@color/system_background</item>
+        <item name="android:windowBackground">@color/background_grey</item>
+        <item name="android:statusBarColor">@color/background_grey</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:fontFamily">-apple-system</item>
     </style>
 
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
-        <item name="cardElevation">0dp</item>
+        <item name="cardElevation">1dp</item>
         <item name="cardCornerRadius">12dp</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
-        <item name="strokeWidth">1dp</item>
-        <item name="strokeColor">@color/divider</item>
+        <item name="cardBackgroundColor">@color/white</item>
     </style>
 
-    <style name="CardTitle" parent="TextAppearance.MaterialComponents.Headline6">
+    <style name="CardTitle">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/text_primary</item>
-        <item name="android:fontFamily">-apple-system</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">-apple-system-thin</item>
     </style>
 
-    <style name="CardSubtitle" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/text_secondary</item>
-        <item name="android:fontFamily">-apple-system</item>
+    <style name="Button.Indigo" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/indigo</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">-apple-system-thin</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="cornerRadius">8dp</item>
     </style>
 </resources>

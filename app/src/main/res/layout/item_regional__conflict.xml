@@ -3,32 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="8dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/conflictLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textColor="@color/text_primary"
-        android:fontFamily="-apple-system-thin"/>
+        android:fontFamily="-apple-system"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/conflictFatalities"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textColor="@color/system_red"
-        android:fontFamily="-apple-system-thin"
-        android:layout_marginTop="4dp"/>
+        android:fontFamily="-apple-system"
+        android:layout_marginTop="2dp"/>
 
     <TextView
         android:id="@+id/conflictDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:textColor="@color/text_secondary"
-        android:fontFamily="-apple-system-thin"
+        android:fontFamily="-apple-system"
         android:layout_marginTop="2dp"/>
 
     <View

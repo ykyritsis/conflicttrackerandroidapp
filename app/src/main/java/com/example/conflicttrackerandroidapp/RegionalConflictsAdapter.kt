@@ -7,10 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.conflicttrackerandroidapp.api.ConflictEvent
 
-class ConflictAdapter(
+class RegionalConflictsAdapter(
     private val conflicts: List<ConflictEvent>,
-    private val onConflictClick: (ConflictEvent) -> Unit
-) : RecyclerView.Adapter<ConflictAdapter.ViewHolder>() {
+    private val onConflictSelected: (ConflictEvent) -> Unit
+) : RecyclerView.Adapter<RegionalConflictsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val location: TextView = view.findViewById(R.id.conflictLocation)
@@ -20,7 +20,7 @@ class ConflictAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_conflict, parent, false)
+            .inflate(R.layout.item_conflict, parent, false)  // Using existing item_conflict layout
         return ViewHolder(view)
     }
 
@@ -28,10 +28,10 @@ class ConflictAdapter(
         val conflict = conflicts[position]
         holder.location.text = "${conflict.country} - ${conflict.location}"
         holder.fatalities.text = "${conflict.fatalities} casualties"
-        holder.date.text = "Updated: ${conflict.event_date}"
+        holder.date.text = conflict.event_date
 
         holder.itemView.setOnClickListener {
-            onConflictClick(conflict)
+            onConflictSelected(conflict)
         }
     }
 

@@ -1,6 +1,10 @@
 package com.example.conflicttrackerandroidapp
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +25,19 @@ class MainActivity : AppCompatActivity() {
         // Set up RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        // Load data
+        // Load initial data
         loadConflictData()
     }
 
     private fun loadConflictData() {
+        // Show loading indicators
+        findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.VISIBLE
+        findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.VISIBLE
+        findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.GONE
+        findViewById<LinearLayout>(R.id.watchlistContent).visibility = View.GONE
+
         lifecycleScope.launch {
             try {
                 // Load most severe recent conflict
@@ -36,8 +47,18 @@ class MainActivity : AppCompatActivity() {
                 // Load top ongoing conflicts
                 val topConflicts = repository.getTopOngoingConflicts()
                 updateWatchlistCard(topConflicts)
+
+                // Hide loading, show content
+                findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
+                findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
+                findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.VISIBLE
+                findViewById<LinearLayout>(R.id.watchlistContent).visibility = View.VISIBLE
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Error loading data", Toast.LENGTH_SHORT).show()
+                // Hide loading indicators on error
+                findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
+                findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
+                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
             }
         }
     }
@@ -45,11 +66,21 @@ class MainActivity : AppCompatActivity() {
     private fun updateEscalatingCard(conflict: ConflictEvent) {
         findViewById<TextView>(R.id.escalatingLocation).text = "${conflict.country} - ${conflict.event_type}"
         findViewById<TextView>(R.id.escalatingFatalities).text = "${conflict.fatalities} casualties"
-        findViewById<TextView>(R.id.escalatingDate).text = "Date: ${conflict.event_date}"
+        findViewById<TextView>(R.id.escalatingDate).text = "Updated: ${conflict.event_date}"
+
+        findViewById<LinearLayout>(R.id.escalatingContent).setOnClickListener {
+            val intent = Intent(this, EscalatingConflictActivity::class.java)
+            intent.putExtra("conflict", conflict)
+            startActivity(intent)
+        }
     }
 
     private fun updateWatchlistCard(conflicts: List<ConflictEvent>) {
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
-        recyclerView.adapter = ConflictAdapter(conflicts)
+        recyclerView.adapter = ConflictAdapter(conflicts) { selectedConflict ->
+            val intent = Intent(this, ConflictDetailActivity::class.java)
+            intent.putExtra("conflict", selectedConflict)
+            startActivity(intent)
+        }
     }
 }
