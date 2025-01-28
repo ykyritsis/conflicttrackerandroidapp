@@ -20,6 +20,12 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
+import com.mapbox.maps.plugin.gestures.GesturesPlugin
+import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.scalebar.scalebar
+import com.mapbox.maps.plugin.compass.compass
+import com.mapbox.maps.plugin.logo.logo
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
@@ -53,6 +59,17 @@ class MainActivity : AppCompatActivity() {
                 .zoom(1.0)
                 .build()
         )
+
+        // Add zoom controls
+        mapView.gestures.pinchToZoomEnabled = true
+        mapView.gestures.doubleTapToZoomInEnabled = true
+        mapView.gestures.doubleTouchToZoomOutEnabled = true
+
+        // Enable map controls
+        mapView.scalebar.enabled = true
+        mapView.compass.enabled = true
+        mapView.logo.enabled = true
+        mapView.attribution.enabled = true
 
         // Set up RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)

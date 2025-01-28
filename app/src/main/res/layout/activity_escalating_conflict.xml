@@ -1,196 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="@color/background_grey">
 
-    <!-- Page Title -->
-    <TextView
-        android:id="@+id/pageTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Escalating Conflict"
-        android:textSize="28sp"
-        android:textColor="@color/text_primary"
-        android:fontFamily="-apple-system-thin"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <!-- Back Button -->
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_back"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/pageTitle"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <!-- Main Conflict Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mainCard"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        style="@style/AppCard"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/backButton"
-        app:layout_constraintHeight_percent="0.4">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:tint="@color/text_primary"
+            android:contentDescription="Back"/>
+
+        <!-- Main Conflict Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            style="@style/AppCard"
+            android:layout_marginTop="16dp">
 
-            <TextView
-                android:id="@+id/conflictTitle"
-                style="@style/CardTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/conflictDescription"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/readMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Read more"
-                android:textColor="@color/indigo"
-                android:fontFamily="-apple-system-thin"/>
+                <TextView
+                    android:id="@+id/conflictTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="-apple-system-thin"/>
 
-            <TextView
-                android:id="@+id/casualties"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/system_red"
-                android:textSize="20sp"
-                android:fontFamily="-apple-system-thin"/>
+                <TextView
+                    android:id="@+id/conflictDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="17sp"
+                    android:textColor="@color/text_secondary"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="12dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"/>
 
-            <TextView
-                android:id="@+id/actors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="-apple-system-thin"/>
+                <TextView
+                    android:id="@+id/readMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Read more"
+                    android:textColor="@color/indigo"
+                    android:textSize="15sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="8dp"
+                    android:padding="4dp"/>
 
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/casualties"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/system_red"
+                    android:textSize="20sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="16dp"/>
 
-    <!-- Region Map Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/mapCard"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        style="@style/AppCard"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintTop_toBottomOf="@id/mainCard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/regionOverviewCard"
-        app:layout_constraintBottom_toBottomOf="parent">
+                <TextView
+                    android:id="@+id/actors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="17sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="8dp"/>
 
-        <LinearLayout
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Region Map Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/regionMapCard"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="200dp"
+            style="@style/AppCard"
+            android:layout_marginTop="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Region Map"
-                style="@style/CardTitle"/>
-
-            <ImageView
-                android:id="@+id/regionMap"
+            <com.mapbox.maps.MapView
+                android:id="@+id/regionMapView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="8dp"
-                android:background="@color/divider"
-                android:contentDescription="Region Map"/>
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Map coming soon"
-                android:textColor="@color/text_tertiary"
-                android:textAlignment="center"
-                android:fontFamily="-apple-system-thin"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
-    <!-- Region Overview Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/regionOverviewCard"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        style="@style/AppCard"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintTop_toBottomOf="@id/mainCard"
-        app:layout_constraintStart_toEndOf="@id/mapCard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <LinearLayout
+        <!-- Regional Statistics Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            style="@style/AppCard"
+            android:layout_marginTop="16dp">
 
-            <TextView
-                android:id="@+id/regionName"
-                style="@style/CardTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/conflictFrequency"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/casualtyComparison"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Regional Overview"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="-apple-system-thin"/>
 
-            <TextView
-                android:id="@+id/severityLevel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:textColor="@color/system_red"
-                android:textStyle="bold"
-                android:fontFamily="-apple-system-thin"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <TextView
+                    android:id="@+id/regionName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="17sp"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="12dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/conflictFrequency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="17sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/casualtyComparison"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/severityLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/system_red"
+                    android:textSize="17sp"
+                    android:fontFamily="-apple-system-thin"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</ScrollView>
