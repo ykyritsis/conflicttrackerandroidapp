@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class ConflictRepository {
-    private val api = Retrofit.Builder()
+    private val acledApi = Retrofit.Builder()
         .baseUrl("https://api.acleddata.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -14,18 +14,18 @@ class ConflictRepository {
 
     suspend fun getMostSevereRecentConflict(): ConflictEvent? {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusYears(10)
+        val startDate = endDate.minusMonths(6) // Reduced from 10 years to 6 months
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         return try {
-            val response = api.getConflicts(
+            val response = acledApi.getConflicts(
                 dateRange = dateRange,
                 limit = 1000
             )
-            // Get most severe conflict by fatalities
+            // Reduced fatality threshold and removed country restrictions
             response.data
-                .sortedByDescending { it.fatalities }
-                .firstOrNull()
+                .filter { conflict -> conflict.fatalities > 50 }
+                .maxByOrNull { it.fatalities }
         } catch (e: Exception) {
             println("Error fetching severe conflict: ${e.message}")
             null
@@ -34,19 +34,19 @@ class ConflictRepository {
 
     suspend fun getTopOngoingConflicts(): List<ConflictEvent> {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusYears(10)
+        val startDate = endDate.minusMonths(6)
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         return try {
-            val response = api.getConflicts(
+            val response = acledApi.getConflicts(
                 dateRange = dateRange,
                 limit = 1000
             )
-            // Get top conflicts by fatalities
             response.data
+                .filter { it.fatalities > 25 } // Reduced threshold
                 .sortedByDescending { it.fatalities }
                 .distinctBy { it.country }
-                .take(4)
+                .take(10) // Increased number of results
         } catch (e: Exception) {
             println("Error fetching watchlist conflicts: ${e.message}")
             emptyList()
@@ -55,18 +55,18 @@ class ConflictRepository {
 
     suspend fun getRegionalConflicts(country: String): List<ConflictEvent> {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusYears(10)
+        val startDate = endDate.minusMonths(3) // Reduced timeframe
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         return try {
-            val response = api.getConflicts(
+            val response = acledApi.getConflicts(
                 dateRange = dateRange,
                 limit = 500
             )
             response.data
                 .filter { it.region == getRegionForCountry(country) }
                 .sortedByDescending { it.fatalities }
-                .take(5)
+                .take(10) // Increased number of results
         } catch (e: Exception) {
             emptyList()
         }
@@ -74,9 +74,9 @@ class ConflictRepository {
 
     private fun getRegionForCountry(country: String): String {
         return when (country) {
-            "Israel", "Palestine", "Syria", "Yemen" -> "Middle East"
-            "Ukraine", "Russia" -> "Europe"
-            else -> ""
+            "Israel", "Palestine", "Syria", "Yemen", "Iraq", "Lebanon" -> "Middle East"
+            "Ukraine", "Russia", "Belarus" -> "Europe"
+            else -> "Unknown"
         }
     }
 }

@@ -2,7 +2,9 @@ package com.example.conflicttrackerandroidapp
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,57 +20,58 @@ class ConflictDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conflict_detail)
 
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            finish()
+        }
+
         val conflict = intent.getParcelableExtra<ConflictEvent>("conflict")
         conflict?.let {
             setupUI(it)
-            loadRegionalConflicts(it)
+            loadData(it)
         }
     }
 
     private fun setupUI(conflict: ConflictEvent) {
-        // Main conflict info
         findViewById<TextView>(R.id.conflictTitle).text = "${conflict.country} Conflict"
         findViewById<TextView>(R.id.conflictDescription).text = conflict.notes
-        findViewById<TextView>(R.id.casualties).text = "Casualties: ${conflict.fatalities}"
-        findViewById<TextView>(R.id.date).text = "Last Updated: ${conflict.event_date}"
+        findViewById<TextView>(R.id.casualties).text = "Total Casualties: ${conflict.fatalities}"
         findViewById<TextView>(R.id.actors).text = "Main Actor: ${conflict.actor1}"
+        findViewById<TextView>(R.id.date).text = "Last Updated: ${conflict.event_date}"
 
-        // Region info
-        findViewById<TextView>(R.id.regionTitle).text = "Regional Overview"
-        findViewById<TextView>(R.id.regionName).text = conflict.region
-
-        // Statistics
-        findViewById<TextView>(R.id.statsTitle).text = "Region Statistics"
-        updateStatistics(conflict)
+        // set placeholder text for statistics card
+        findViewById<TextView>(R.id.countryPopulation).text = "Population data unavailable"
+        findViewById<TextView>(R.id.countryGDP).text = "GDP data unavailable"
+        findViewById<TextView>(R.id.countryGDPPerCapita).text = "GDP per capita unavailable"
+        findViewById<TextView>(R.id.countryLifeExpectancy).text = "Life expectancy data unavailable"
     }
 
-    private fun loadRegionalConflicts(mainConflict: ConflictEvent) {
+    private fun loadData(conflict: ConflictEvent) {
+        findViewById<View>(R.id.loadingStats).visibility = View.GONE
+        findViewById<View>(R.id.loadingRegional).visibility = View.VISIBLE
+
         lifecycleScope.launch {
             try {
-                val regionalConflicts = repository.getRegionalConflicts(mainConflict.country)
-                    .filter { it.event_id_cnty != mainConflict.event_id_cnty } // Exclude current conflict
+                // Load only regional conflicts
+                val regionalConflicts = repository.getRegionalConflicts(conflict.country)
+                    .filter { it.event_id_cnty != conflict.event_id_cnty }
+                updateRegionalConflicts(regionalConflicts)
 
-                val recyclerView = findViewById<RecyclerView>(R.id.regionalConflictsRecyclerView)
-                recyclerView.layoutManager = LinearLayoutManager(this@ConflictDetailActivity)
-                recyclerView.adapter = RegionalConflictsAdapter(regionalConflicts) { selectedConflict ->
-                    // Update the UI with the selected conflict
-                    setupUI(selectedConflict)
-                }
+                findViewById<View>(R.id.loadingRegional).visibility = View.GONE
             } catch (e: Exception) {
-                // Handle error
+                findViewById<View>(R.id.loadingRegional).visibility = View.GONE
+                Toast.makeText(this@ConflictDetailActivity,
+                    "Error loading data: ${e.message}",
+                    Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun updateStatistics(conflict: ConflictEvent) {
-        val statsText = """
-            Region: ${conflict.region}
-            Country: ${conflict.country}
-            Location: ${conflict.location}
-            Total Fatalities: ${conflict.fatalities}
-            Last Updated: ${conflict.event_date}
-        """.trimIndent()
-
-        findViewById<TextView>(R.id.regionStats).text = statsText
+    private fun updateRegionalConflicts(conflicts: List<ConflictEvent>) {
+        val recyclerView = findViewById<RecyclerView>(R.id.regionalConflictsRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ConflictAdapter(conflicts) { selectedConflict ->
+            setupUI(selectedConflict)
+            loadData(selectedConflict)
+        }
     }
 }
