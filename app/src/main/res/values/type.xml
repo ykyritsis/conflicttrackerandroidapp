@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTextLarge">
+        <item name="android:textSize">34sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">-apple-system</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTextTitle">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">-apple-system</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTextSubtitle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">-apple-system</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTextBody">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">-apple-system</item>
+    </style>
+
+    <style name="AppTextCaption">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">-apple-system</item>
+    </style>
+</resources>

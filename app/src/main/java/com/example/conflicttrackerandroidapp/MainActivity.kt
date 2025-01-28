@@ -58,8 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize map
         mapView = findViewById(R.id.mapView)
-
-        // Updated style loading
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS)
 
         // Set initial camera position (world view)
@@ -89,8 +87,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun addMapControls() {
         val mapParent = mapView.parent as ViewGroup
+        val buttonSize = 32.dpToPx()
 
-        // Add zoom controls
+        // Add zoom controls container
         val zoomButtonsContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = FrameLayout.LayoutParams(
@@ -103,12 +102,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val buttonSize = 40.dpToPx() // Increased button size
-
         // Create zoom in button
         val zoomInButton = MaterialButton(this).apply {
             text = "+"
-            textSize = 20f // Increased text size
+            textSize = 20f
             insetTop = 0
             insetBottom = 0
             minHeight = buttonSize
@@ -116,10 +113,10 @@ class MainActivity : AppCompatActivity() {
             layoutParams = LinearLayout.LayoutParams(buttonSize, buttonSize).apply {
                 bottomMargin = 8.dpToPx()
             }
-            alpha = 0.8f // Increased opacity
+            alpha = 0.9f  // Increased opacity
             setBackgroundResource(R.drawable.rounded_square_button_bg)
             setTextColor(ContextCompat.getColor(context, android.R.color.white))
-            setPadding(0, 0, 0, 0) // Remove padding
+            setPadding(0, 0, 0, 0)  // Remove padding
             setOnClickListener {
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
@@ -130,19 +127,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Create zoom out button
+// Create zoom out button
         val zoomOutButton = MaterialButton(this).apply {
-            text = "−" // Using proper minus sign
-            textSize = 20f // Increased text size
+            text = "−"  // Using proper minus sign
+            textSize = 20f
             insetTop = 0
             insetBottom = 0
             minHeight = buttonSize
             minWidth = buttonSize
             layoutParams = LinearLayout.LayoutParams(buttonSize, buttonSize)
-            alpha = 0.8f // Increased opacity
+            alpha = 0.9f  // Increased opacity
             setBackgroundResource(R.drawable.rounded_square_button_bg)
             setTextColor(ContextCompat.getColor(context, android.R.color.white))
-            setPadding(0, 0, 0, 0) // Remove padding
+            setPadding(0, 0, 0, 0)  // Remove padding
             setOnClickListener {
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
@@ -157,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         zoomButtonsContainer.addView(zoomOutButton)
         mapParent.addView(zoomButtonsContainer)
 
-        // Add legend (now at bottom-left)
+        // Add legend
         val legendContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             background = ResourcesCompat.getDrawable(resources, R.drawable.semi_transparent_background, theme)
@@ -171,7 +168,6 @@ class MainActivity : AppCompatActivity() {
                 setPadding(8.dpToPx(), 8.dpToPx(), 8.dpToPx(), 8.dpToPx())
             }
         }
-
         // Add legend items
         val legendItems = listOf(
             Pair(R.drawable.marker_severe, "Severe Conflict"),

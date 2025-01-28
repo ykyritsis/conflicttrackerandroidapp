@@ -12,13 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Conflict Tracker"
-        android:textSize="34sp"
-        android:textColor="@color/text_primary"
-        android:fontFamily="-apple-system-thin"
-        android:textStyle="bold"
+        style="@style/AppTextLarge"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
     <!-- Map Card -->
@@ -37,7 +33,7 @@
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="16dp"/>
+            android:layout_margin="8dp"/>
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -47,9 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Map View"
-        android:textSize="17sp"
-        android:textColor="@color/text_secondary"
-        android:fontFamily="-apple-system-thin"
+        style="@style/AppTextCaption"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/mapCard"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,9 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Escalating Conflict"
-                android:textSize="20sp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="-apple-system-thin"/>
+                style="@style/AppTextSubtitle"/>
 
             <ProgressBar
                 android:id="@+id/escalatingProgress"
@@ -88,8 +80,7 @@
                 android:layout_height="36dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:indeterminateTintMode="src_atop"
-                android:indeterminateTint="@color/indigo"/>
+                android:indeterminateTint="@color/accent_blue"/>
 
             <LinearLayout
                 android:id="@+id/escalatingContent"
@@ -102,27 +93,22 @@
                     android:id="@+id/escalatingLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="17sp"
-                    android:textColor="@color/text_primary"
-                    android:fontFamily="-apple-system-thin"
+                    style="@style/AppTextBody"
                     android:layout_marginTop="12dp"/>
 
                 <TextView
                     android:id="@+id/escalatingFatalities"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/AppTextBody"
                     android:textColor="@color/system_red"
-                    android:textSize="24sp"
-                    android:fontFamily="-apple-system-thin"
                     android:layout_marginTop="8dp"/>
 
                 <TextView
                     android:id="@+id/escalatingDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="15sp"
-                    android:fontFamily="-apple-system-thin"
+                    style="@style/AppTextCaption"
                     android:layout_marginTop="4dp"/>
 
                 <com.google.android.material.button.MaterialButton
@@ -130,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Read More"
-                    style="@style/Button.Indigo"
+                    style="@style/Button.Modern"
                     android:layout_marginTop="12dp"/>
 
             </LinearLayout>
@@ -161,9 +147,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Conflict Watchlist"
-                android:textSize="20sp"
-                android:textColor="@color/text_primary"
-                android:fontFamily="-apple-system-thin"/>
+                style="@style/AppTextSubtitle"/>
 
             <ProgressBar
                 android:id="@+id/watchlistProgress"
@@ -171,8 +155,7 @@
                 android:layout_height="36dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                android:indeterminateTintMode="src_atop"
-                android:indeterminateTint="@color/indigo"/>
+                android:indeterminateTint="@color/accent_blue"/>
 
             <LinearLayout
                 android:id="@+id/watchlistContent"
@@ -198,9 +181,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ioannis Kyritsis 2025"
-        android:textSize="13sp"
-        android:textColor="@color/text_tertiary"
-        android:fontFamily="-apple-system-thin"
+        style="@style/AppTextCaption"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
