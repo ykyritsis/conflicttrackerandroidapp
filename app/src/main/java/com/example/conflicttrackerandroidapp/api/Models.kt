@@ -26,6 +26,13 @@ data class ConflictEvent(
     val fatalities: Int
 ) : Parcelable
 
+data class FilterOptions(
+    var region: String? = null,
+    var severityLevel: String? = null,
+    var eventType: String? = null,
+    var timeframe: String? = null
+)
+
 data class CountryStats(
     val population: Double?,
     val gdp: Double?,
@@ -34,7 +41,9 @@ data class CountryStats(
     val globalAvgPopulation: Double = 67000000.0,
     val globalAvgGDP: Double = 1300000000000.0,
     val globalAvgMilitary: Double = 25000000000.0
-) {
+)
+
+{
     fun getPopulationComparison(): String {
         return population?.let {
             val percentage = ((it - globalAvgPopulation) / globalAvgPopulation * 100)

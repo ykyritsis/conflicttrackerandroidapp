@@ -77,7 +77,7 @@ class ConflictRepository {
         try {
             val response = acledApi.getConflicts(
                 dateRange = dateRange,
-                limit = 500 // Increased from 200
+                limit = 100 // Increased from 200
             )
 
             val region = response.data.find { it.country == country }?.region
