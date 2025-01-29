@@ -33,9 +33,7 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.gestures
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
-// Extension functions
 fun Drawable.toBitmap(width: Int, height: Int): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
@@ -45,12 +43,13 @@ fun Drawable.toBitmap(width: Int, height: Int): Bitmap {
 }
 
 fun Int.dpToPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.density).roundToInt()
+    return (this * Resources.getSystem().displayMetrics.density).toInt()
 }
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private val repository = ConflictRepository()
+    private val plottedConflicts = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +59,11 @@ class MainActivity : AppCompatActivity() {
         mapView = findViewById(R.id.mapView)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS)
 
-        // Set initial camera position (world view)
+        // Set initial camera position
         mapView.mapboxMap.setCamera(
             CameraOptions.Builder()
-                .center(Point.fromLngLat(0.0, 0.0))
-                .zoom(1.0)
+                .center(Point.fromLngLat(0.0, 20.0))
+                .zoom(2.0)
                 .build()
         )
 
@@ -84,7 +83,6 @@ class MainActivity : AppCompatActivity() {
         // Load initial data
         loadConflictData()
     }
-
     private fun addMapControls() {
         val mapParent = mapView.parent as ViewGroup
         val buttonSize = 32.dpToPx()
@@ -113,10 +111,10 @@ class MainActivity : AppCompatActivity() {
             layoutParams = LinearLayout.LayoutParams(buttonSize, buttonSize).apply {
                 bottomMargin = 8.dpToPx()
             }
-            alpha = 0.9f  // Increased opacity
+            alpha = 0.9f
             setBackgroundResource(R.drawable.rounded_square_button_bg)
             setTextColor(ContextCompat.getColor(context, android.R.color.white))
-            setPadding(0, 0, 0, 0)  // Remove padding
+            setPadding(0, 0, 0, 0)
             setOnClickListener {
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
@@ -127,19 +125,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-// Create zoom out button
+        // Create zoom out button
         val zoomOutButton = MaterialButton(this).apply {
-            text = "−"  // Using proper minus sign
+            text = "−"
             textSize = 20f
             insetTop = 0
             insetBottom = 0
             minHeight = buttonSize
             minWidth = buttonSize
             layoutParams = LinearLayout.LayoutParams(buttonSize, buttonSize)
-            alpha = 0.9f  // Increased opacity
+            alpha = 0.9f
             setBackgroundResource(R.drawable.rounded_square_button_bg)
             setTextColor(ContextCompat.getColor(context, android.R.color.white))
-            setPadding(0, 0, 0, 0)  // Remove padding
+            setPadding(0, 0, 0, 0)
             setOnClickListener {
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
@@ -168,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 setPadding(8.dpToPx(), 8.dpToPx(), 8.dpToPx(), 8.dpToPx())
             }
         }
-        // Add legend items
+
         val legendItems = listOf(
             Pair(R.drawable.marker_severe, "Severe Conflict"),
             Pair(R.drawable.marker_regular, "Active Conflict")
@@ -208,7 +206,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadConflictData() {
-        // Show loading indicators
         findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.VISIBLE
         findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.VISIBLE
         findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.GONE
@@ -216,33 +213,61 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Load most severe recent conflict
+                // First Priority: Load and display escalating conflict
                 val severeConflict = repository.getMostSevereRecentConflict()
                 severeConflict?.let {
                     updateEscalatingCard(it)
-                    // Add marker for severe conflict
                     addConflictMarker(it, true)
+                    findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
+                    findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.VISIBLE
                 }
 
-                // Load top ongoing conflicts
-                val topConflicts = repository.getTopOngoingConflicts()
-                updateWatchlistCard(topConflicts)
-                // Add markers for top conflicts
-                topConflicts.forEach {
-                    addConflictMarker(it, false)
-                }
-
-                // Hide loading, show content
-                findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
+                // Second Priority: Load and display watchlist
+                val conflicts = repository.getTopOngoingConflicts()
+                updateWatchlistCard(conflicts)
                 findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
-                findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.VISIBLE
                 findViewById<LinearLayout>(R.id.watchlistContent).visibility = View.VISIBLE
+
+                // Third Priority: Plot initial conflicts on map (limited to 50)
+                conflicts.take(50).forEach { conflict ->
+                    addConflictMarker(conflict, false)
+                }
+
+                // Fourth Priority (Background): Load and plot additional conflicts
+                lifecycleScope.launch {
+                    try {
+                        // Load regional conflicts for severe conflict
+                        severeConflict?.let { severe ->
+                            val regionalConflicts = repository.getRegionalConflicts(severe.country)
+                            regionalConflicts
+                                .take(20)
+                                .forEach { regionalConflict ->
+                                    if (regionalConflict.event_id_cnty != severe.event_id_cnty) {
+                                        addConflictMarker(regionalConflict, false)
+                                    }
+                                }
+                        }
+
+                        // Load regional conflicts for top 5 watchlist conflicts
+                        conflicts.take(5).forEach { conflict ->
+                            val regionalConflicts = repository.getRegionalConflicts(conflict.country)
+                            regionalConflicts
+                                .take(20)
+                                .forEach { regionalConflict ->
+                                    if (regionalConflict.event_id_cnty != conflict.event_id_cnty) {
+                                        addConflictMarker(regionalConflict, false)
+                                    }
+                                }
+                        }
+                    } catch (e: Exception) {
+                        // Silent fail for background loading - main content already displayed
+                    }
+                }
+
             } catch (e: Exception) {
-                // Hide loading indicators on error
                 findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
                 findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
-                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-                e.printStackTrace()
+                Toast.makeText(this@MainActivity, "Error loading data", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -252,7 +277,6 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.escalatingFatalities).text = "${conflict.fatalities} casualties"
         findViewById<TextView>(R.id.escalatingDate).text = "Updated: ${conflict.event_date}"
 
-        // Set up Read More button click
         findViewById<MaterialButton>(R.id.escalatingReadMore).setOnClickListener {
             val intent = Intent(this, EscalatingConflictActivity::class.java)
             intent.putExtra("conflict", conflict)
@@ -261,8 +285,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateWatchlistCard(conflicts: List<ConflictEvent>) {
+        val topFiveConflicts = conflicts.take(5)
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
-        recyclerView.adapter = ConflictAdapter(conflicts) { selectedConflict ->
+        recyclerView.adapter = ConflictAdapter(topFiveConflicts) { selectedConflict ->
             val intent = Intent(this, ConflictDetailActivity::class.java)
             intent.putExtra("conflict", selectedConflict)
             startActivity(intent)
@@ -270,31 +295,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addConflictMarker(conflict: ConflictEvent, isSevere: Boolean) {
-        val pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
-
-        // Get the appropriate marker drawable
-        val markerDrawable = if (isSevere) {
-            resources.getDrawable(R.drawable.marker_severe, theme)
-        } else {
-            resources.getDrawable(R.drawable.marker_regular, theme)
+        if (plottedConflicts.contains(conflict.event_id_cnty)) {
+            return
         }
 
-        // Convert drawable to bitmap
-        val bitmap = markerDrawable.toBitmap(
-            width = 40,
-            height = 40
-        )
+        val pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
 
-        // Create a marker
+        val markerDrawable = if (isSevere) {
+            resources.getDrawable(R.drawable.marker_severe, theme).apply {
+                alpha = 180
+            }
+        } else {
+            resources.getDrawable(R.drawable.marker_regular, theme).apply {
+                alpha = 180
+            }
+        }
+
+        val bitmap = markerDrawable.toBitmap(40, 40)
+
         val pointAnnotationOptions = PointAnnotationOptions()
             .withPoint(Point.fromLngLat(conflict.longitude, conflict.latitude))
             .withIconImage(bitmap)
             .withIconSize(1.0)
 
-        // Add the marker
         val annotation = pointAnnotationManager.create(pointAnnotationOptions)
 
-        // Add click listener to marker
         pointAnnotationManager.addClickListener { clickedAnnotation ->
             if (clickedAnnotation == annotation) {
                 val intent = Intent(this, ConflictDetailActivity::class.java)
@@ -303,9 +328,10 @@ class MainActivity : AppCompatActivity() {
                 true
             } else false
         }
+
+        plottedConflicts.add(conflict.event_id_cnty)
     }
 
-    // Lifecycle methods for MapView
     override fun onStart() {
         super.onStart()
         mapView.onStart()
@@ -317,6 +343,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        plottedConflicts.clear()
         super.onDestroy()
         mapView.onDestroy()
     }
