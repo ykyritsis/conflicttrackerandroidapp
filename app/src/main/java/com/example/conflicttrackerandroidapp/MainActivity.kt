@@ -2,6 +2,8 @@ package com.example.conflicttrackerandroidapp
 
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -81,6 +83,11 @@ class MainActivity : AppCompatActivity() {
 
         // Add map controls
         addMapControls()
+        val legendItems = listOf(
+            Pair(R.drawable.marker_severe, "Severe (20+ casualties)"),
+            Pair(R.drawable.marker_regular, "Escalating (10-20 casualties)"),
+            Pair(R.drawable.marker_concerning, "Concerning (<10 casualties)")
+        )
 
         // Set up RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
@@ -160,9 +167,12 @@ class MainActivity : AppCompatActivity() {
         mapParent.addView(zoomButtonsContainer)
 
         // Add legend
+        // In MainActivity.kt, update the legendItems section in addMapControls():
+
+        // Add legend
         val legendContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            background = ResourcesCompat.getDrawable(resources, R.drawable.semi_transparent_background, theme)
+            background = ResourcesCompat.getDrawable(resources, R.drawable.legend_background, theme)
             layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
@@ -170,45 +180,63 @@ class MainActivity : AppCompatActivity() {
                 gravity = Gravity.BOTTOM or Gravity.START
                 bottomMargin = 16.dpToPx()
                 marginStart = 16.dpToPx()
-                setPadding(8.dpToPx(), 8.dpToPx(), 8.dpToPx(), 8.dpToPx())
             }
         }
 
-        val legendItems = listOf(
-            Pair(R.drawable.marker_severe, "Severe Conflict"),
-            Pair(R.drawable.marker_regular, "Active Conflict")
-        )
+        // Create a single row container
+        val legendContent = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(12.dpToPx(), 8.dpToPx(), 12.dpToPx(), 8.dpToPx())
+        }
 
-        legendItems.forEach { (drawableId, text) ->
-            val itemLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    bottomMargin = 4.dpToPx()
-                }
-            }
-
-            val icon = ImageView(this).apply {
-                setImageResource(drawableId)
-                layoutParams = LinearLayout.LayoutParams(16.dpToPx(), 16.dpToPx()).apply {
-                    marginEnd = 8.dpToPx()
+        // Define legend items more concisely
+        listOf(
+            Triple(R.drawable.marker_severe, "20+", "#FF4444"),
+            Triple(R.drawable.marker_regular, "10-20", "#FFA500"),
+            Triple(R.drawable.marker_concerning, "<10", "#4BA3E3")
+        ).forEach { (icon, range, color) ->
+            legendContent.addView(
+                LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
                     gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = 4.dpToPx()
+                    }
+
+                    addView(ImageView(context).apply {
+                        setImageResource(icon)
+                        layoutParams = LinearLayout.LayoutParams(12.dpToPx(), 12.dpToPx()).apply {
+                            marginEnd = 8.dpToPx()
+                        }
+                    })
+
+                    addView(TextView(context).apply {
+                        text = range
+                        setTextColor(Color.parseColor(color))
+                        textSize = 11f
+                        typeface = Typeface.DEFAULT_BOLD
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            marginEnd = 4.dpToPx()
+                        }
+                    })
+
+                    addView(TextView(context).apply {
+                        text = "casualties"
+                        setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+                        textSize = 11f
+                        alpha = 0.8f
+                    })
                 }
-            }
-
-            val label = TextView(this).apply {
-                this.text = text
-                textSize = 12f
-                setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-            }
-
-            itemLayout.addView(icon)
-            itemLayout.addView(label)
-            legendContainer.addView(itemLayout)
+            )
         }
 
+        legendContainer.addView(legendContent)
         mapParent.addView(legendContainer)
     }
 
@@ -303,21 +331,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun addConflictMarker(conflict: ConflictEvent, isSevere: Boolean) {
+    private fun addConflictMarker(conflict: ConflictEvent, isMainConflict: Boolean) {
         if (plottedConflicts.contains(conflict.event_id_cnty)) {
             return
         }
 
         val pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
 
-        val markerDrawable = if (isSevere) {
-            resources.getDrawable(R.drawable.marker_severe, theme).apply {
-                alpha = 180
-            }
-        } else {
-            resources.getDrawable(R.drawable.marker_regular, theme).apply {
-                alpha = 180
-            }
+        val markerDrawable = when {
+            isMainConflict -> resources.getDrawable(R.drawable.marker_severe, theme)
+            conflict.fatalities >= 20 -> resources.getDrawable(R.drawable.marker_severe, theme)
+            conflict.fatalities >= 10 -> resources.getDrawable(R.drawable.marker_regular, theme)
+            else -> resources.getDrawable(R.drawable.marker_concerning, theme)
+        }.apply {
+            alpha = 180
         }
 
         val bitmap = markerDrawable.toBitmap(40, 40)
