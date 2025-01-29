@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.conflicttrackerandroidapp.api.ConflictEvent
 import com.example.conflicttrackerandroidapp.api.ConflictRepository
+import com.example.conflicttrackerandroidapp.api.WorldBankRepository
 import com.google.android.material.button.MaterialButton
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -49,11 +50,17 @@ fun Int.dpToPx(): Int {
 class MainActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
     private val repository = ConflictRepository()
+    private val worldBankRepository = WorldBankRepository()
     private val plottedConflicts = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Initialize country codes
+        lifecycleScope.launch {
+            worldBankRepository.initializeCountryCodes()
+        }
 
         // Initialize map
         mapView = findViewById(R.id.mapView)
@@ -229,7 +236,10 @@ class MainActivity : AppCompatActivity() {
                 findViewById<LinearLayout>(R.id.watchlistContent).visibility = View.VISIBLE
 
                 // Third Priority: Plot initial conflicts on map (limited to 50)
-                conflicts.take(50).forEach { conflict ->
+                // In loadConflictData() function, update these sections:
+
+                // Third Priority: Plot initial conflicts on map (increased limit)
+                conflicts.take(150).forEach { conflict ->  // Increased from 50 to 150
                     addConflictMarker(conflict, false)
                 }
 
@@ -240,7 +250,7 @@ class MainActivity : AppCompatActivity() {
                         severeConflict?.let { severe ->
                             val regionalConflicts = repository.getRegionalConflicts(severe.country)
                             regionalConflicts
-                                .take(20)
+                                .take(60)  // Increased from 20 to 60
                                 .forEach { regionalConflict ->
                                     if (regionalConflict.event_id_cnty != severe.event_id_cnty) {
                                         addConflictMarker(regionalConflict, false)
@@ -252,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                         conflicts.take(5).forEach { conflict ->
                             val regionalConflicts = repository.getRegionalConflicts(conflict.country)
                             regionalConflicts
-                                .take(20)
+                                .take(60)  // Increased from 20 to 60
                                 .forEach { regionalConflict ->
                                     if (regionalConflict.event_id_cnty != conflict.event_id_cnty) {
                                         addConflictMarker(regionalConflict, false)
@@ -263,7 +273,6 @@ class MainActivity : AppCompatActivity() {
                         // Silent fail for background loading - main content already displayed
                     }
                 }
-
             } catch (e: Exception) {
                 findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
                 findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
@@ -275,7 +284,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateEscalatingCard(conflict: ConflictEvent) {
         findViewById<TextView>(R.id.escalatingLocation).text = "${conflict.country} - ${conflict.event_type}"
         findViewById<TextView>(R.id.escalatingFatalities).text = "${conflict.fatalities} casualties"
-        findViewById<TextView>(R.id.escalatingDate).text = "Updated: ${conflict.event_date}"
+        findViewById<TextView>(R.id.escalatingDate).text = "Event Date: ${conflict.event_date}"
 
         findViewById<MaterialButton>(R.id.escalatingReadMore).setOnClickListener {
             val intent = Intent(this, EscalatingConflictActivity::class.java)

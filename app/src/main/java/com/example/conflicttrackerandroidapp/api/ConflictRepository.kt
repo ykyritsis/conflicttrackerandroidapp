@@ -30,13 +30,13 @@ class ConflictRepository {
 
     suspend fun getMostSevereRecentConflict(): ConflictEvent? = withContext(Dispatchers.IO) {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusMonths(1)
+        val startDate = endDate.minusMonths(3) // Increased from 1 to 3 months
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         try {
             val response = acledApi.getConflicts(
                 dateRange = dateRange,
-                limit = 100
+                limit = 300 // Increased from 100
             )
 
             response.data
@@ -50,19 +50,19 @@ class ConflictRepository {
 
     suspend fun getTopOngoingConflicts(): List<ConflictEvent> = withContext(Dispatchers.IO) {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusMonths(1)
+        val startDate = endDate.minusMonths(3) // Increased from 1 to 3 months
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         try {
             val response = acledApi.getConflicts(
                 dateRange = dateRange,
-                limit = 200
+                limit = 500 // Increased from 200
             )
 
             response.data
                 .filter { it.fatalities > 1 }
                 .sortedByDescending { it.fatalities }
-                .take(50)
+                .take(150) // Increased from 50 to 150
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching conflicts: ${e.message}")
             emptyList()
@@ -71,13 +71,13 @@ class ConflictRepository {
 
     suspend fun getRegionalConflicts(country: String): List<ConflictEvent> = withContext(Dispatchers.IO) {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusMonths(1)
+        val startDate = endDate.minusMonths(3) // Increased from 1 to 3 months
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         try {
             val response = acledApi.getConflicts(
                 dateRange = dateRange,
-                limit = 200
+                limit = 500 // Increased from 200
             )
 
             val region = response.data.find { it.country == country }?.region
@@ -89,7 +89,7 @@ class ConflictRepository {
             response.data
                 .filter { it.region == region && it.fatalities > 1 }
                 .sortedByDescending { it.fatalities }
-                .take(20)
+                .take(60) // Increased from 20 to 60
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching regional conflicts: ${e.message}")
             emptyList()
