@@ -4,6 +4,10 @@
         <item name="android:windowBackground">@color/background_grey</item>
         <item name="android:statusBarColor">@color/background_grey</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Set the default font family globally -->
+        <item name="android:fontFamily">@font/helvetica_neue_thin</item>
+        <item name="fontFamily">@font/helvetica_neue_thin</item>
     </style>
 
     <style name="AppCard" parent="Widget.MaterialComponents.CardView">
@@ -15,14 +19,18 @@
     <style name="CardTitle" parent="AppTextSubtitle">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/text_primary</item>
-        <item name="android:fontFamily">-apple-system</item>
+        <!-- Updated fontFamily -->
+        <item name="android:fontFamily">@font/helvetica_neue_thin</item>
+        <item name="fontFamily">@font/helvetica_neue_thin</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Button.Modern" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/accent_blue</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:fontFamily">-apple-system</item>
+        <!-- Updated fontFamily -->
+        <item name="android:fontFamily">@font/helvetica_neue_thin</item>
+        <item name="fontFamily">@font/helvetica_neue_thin</item>
         <item name="android:textSize">16sp</item>
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>

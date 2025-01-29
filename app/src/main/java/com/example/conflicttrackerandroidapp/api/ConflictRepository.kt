@@ -71,13 +71,13 @@ class ConflictRepository {
 
     suspend fun getRegionalConflicts(country: String): List<ConflictEvent> = withContext(Dispatchers.IO) {
         val endDate = LocalDate.now()
-        val startDate = endDate.minusMonths(3) // Increased from 1 to 3 months
+        val startDate = endDate.minusMonths(12) // Increased from 1 to 3 months
         val dateRange = "${startDate.format(DateTimeFormatter.ISO_DATE)}|${endDate.format(DateTimeFormatter.ISO_DATE)}"
 
         try {
             val response = acledApi.getConflicts(
                 dateRange = dateRange,
-                limit = 100 // Increased from 200
+                limit = 400 // Increased from 200
             )
 
             val region = response.data.find { it.country == country }?.region
