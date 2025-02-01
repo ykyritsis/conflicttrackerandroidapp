@@ -7,6 +7,7 @@ import kotlinx.coroutines.coroutineScope
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// repository for interacting with the world bank api
 class WorldBankRepository {
     private val TAG = "WorldBankRepository"
     private val gson = Gson()
@@ -18,16 +19,18 @@ class WorldBankRepository {
         .build()
         .create(WorldBankApiService::class.java)
 
+    // initialise and cache country codes from the world bank api
     suspend fun initializeCountryCodes() {
         try {
             val response = worldBankApi.getCountries()
             countryCodeMap = extractCountryCodes(response)
-            Log.d(TAG, "Initialized ${countryCodeMap.size} country codes")
+            Log.d(TAG, "initialized ${countryCodeMap.size} country codes")
         } catch (e: Exception) {
-            Log.e(TAG, "Error initializing country codes: ${e.message}")
+            Log.e(TAG, "error initializing country codes: ${e.message}")
         }
     }
 
+    // extract a map of country name to country code from the api response
     private fun extractCountryCodes(response: List<Any>): Map<String, String> {
         return try {
             val jsonArray = gson.toJsonTree(response).asJsonArray
@@ -43,25 +46,26 @@ class WorldBankRepository {
                 emptyMap()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error extracting country codes: ${e.message}")
+            Log.e(TAG, "error extracting country codes: ${e.message}")
             emptyMap()
         }
     }
 
+    // get stats for a given country by its name
     suspend fun getCountryStats(country: String): CountryStats? {
-        // Initialize country codes if not already done
+        // ensure country codes are initialized
         if (countryCodeMap.isEmpty()) {
             initializeCountryCodes()
         }
 
         val countryCode = countryCodeMap[country]
         if (countryCode == null) {
-            Log.d(TAG, "No country code found for: $country")
+            Log.d(TAG, "no country code found for: $country")
             return CountryStats(
                 population = null,
                 gdp = null,
                 militaryExpenditure = null,
-                note = "Data not available for this country"
+                note = "data not available for this country"
             )
         }
 
@@ -81,35 +85,37 @@ class WorldBankRepository {
                     militaryExpenditure = military,
                     note = when {
                         population == null && gdp == null && military == null ->
-                            "No current data available for this country"
+                            "no current data available for this country"
                         population == null || gdp == null || military == null ->
-                            "Some data may be from previous years or unavailable"
+                            "some data may be from previous years or unavailable"
                         else ->
-                            "Data available from World Bank"
+                            "data available from world bank"
                     }
                 )
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting country stats for $country: ${e.message}")
+            Log.e(TAG, "error getting country stats for $country: ${e.message}")
             CountryStats(
                 population = null,
                 gdp = null,
                 militaryExpenditure = null,
-                note = "Error fetching country data"
+                note = "error fetching country data"
             )
         }
     }
 
+    // safely executes an api call and extracts a double value from the response
     private suspend fun safeApiCall(apiCall: suspend () -> List<Any>): Double? {
         return try {
             val response = apiCall()
             extractValue(response)
         } catch (e: Exception) {
-            Log.e(TAG, "API call failed: ${e.message}")
+            Log.e(TAG, "api call failed: ${e.message}")
             null
         }
     }
 
+    // extract the value from the api response json structure
     private fun extractValue(response: List<Any>): Double? {
         return try {
             val jsonArray = gson.toJsonTree(response).asJsonArray
@@ -123,7 +129,7 @@ class WorldBankRepository {
                 } else null
             } else null
         } catch (e: Exception) {
-            Log.e(TAG, "Error extracting value: ${e.message}")
+            Log.e(TAG, "error extracting value: ${e.message}")
             null
         }
     }

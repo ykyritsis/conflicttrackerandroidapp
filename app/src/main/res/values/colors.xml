@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- background color for general screens -->
     <color name="background_grey">#F2F2F7</color>
+    <!-- pure white color -->
     <color name="white">#FFFFFF</color>
+    <!-- primary text color -->
     <color name="text_primary">#000000</color>
+    <!-- secondary text color -->
     <color name="text_secondary">#3C3C43</color>
+    <!-- tertiary text color with opacity -->
     <color name="text_tertiary">#3C3C4399</color>
+    <!-- blue accent color -->
     <color name="accent_blue">#007AFF</color>
+    <!-- system red color for errors -->
     <color name="system_red">#FF3B30</color>
+    <!-- divider color with transparency -->
     <color name="divider">#3C3C431A</color>
+    <!-- indigo color -->
     <color name="indigo">#FF4B0082</color>
 </resources>

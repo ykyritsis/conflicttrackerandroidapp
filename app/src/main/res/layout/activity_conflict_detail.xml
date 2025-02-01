@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- main activity layout using constraintlayout; displays conflict details, regional conflicts, and country statistics -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="@color/background_grey">
 
-    <!-- Page Title -->
+    <!-- page title text -->
     <TextView
         android:id="@+id/pageTitle"
         android:layout_width="wrap_content"
@@ -14,12 +16,12 @@
         android:text="Conflict Details"
         android:textSize="28sp"
         android:textColor="@color/text_primary"
-        android:fontFamily="-apple-system-thin"
+        android:fontFamily="@font/helvetica_neue_thin"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- Back Button -->
+    <!-- back button to navigate back -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="48dp"
@@ -30,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@id/pageTitle"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- Main Conflict Card -->
+    <!-- main conflict card displaying detailed conflict info -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mainCard"
         android:layout_width="match_parent"
@@ -40,26 +42,30 @@
         app:layout_constraintTop_toBottomOf="@id/backButton"
         app:layout_constraintHeight_percent="0.4">
 
+        <!-- container for main conflict details -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- conflict title using subtitle style -->
             <TextView
                 android:id="@+id/conflictTitle"
                 style="@style/AppTextSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <!-- conflict description text -->
             <TextView
                 android:id="@+id/conflictDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
+                android:fontFamily="@font/helvetica_neue_thin"/>
 
+            <!-- casualties text in red to indicate severity -->
             <TextView
                 android:id="@+id/casualties"
                 android:layout_width="wrap_content"
@@ -67,28 +73,30 @@
                 android:layout_marginTop="16dp"
                 android:textColor="@color/system_red"
                 android:textSize="20sp"
-                android:fontFamily="-apple-system-thin"/>
+                android:fontFamily="@font/helvetica_neue_thin"/>
 
+            <!-- main actor info -->
             <TextView
                 android:id="@+id/actors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/text_primary"
-                android:fontFamily="-apple-system-thin"/>
+                android:fontFamily="@font/helvetica_neue_thin"/>
 
+            <!-- date text -->
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/text_secondary"
-                android:fontFamily="-apple-system-thin"/>
+                android:fontFamily="@font/helvetica_neue_thin"/>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Region Overview Card -->
+    <!-- regional conflicts card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/regionCard"
         android:layout_width="0dp"
@@ -101,29 +109,34 @@
         app:layout_constraintEnd_toStartOf="@id/statsCard"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- container for regional conflicts info -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- header for regional conflicts -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Regional Conflicts"
                 style="@style/AppTextSubtitle"/>
 
+            <!-- container for regional conflicts recycler view with a progress indicator overlay -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
+                <!-- recycler view listing regional conflicts -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/regionalConflictsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="8dp"/>
 
+                <!-- progress indicator for regional conflicts loading -->
                 <ProgressBar
                     android:id="@+id/loadingRegional"
                     android:layout_width="36dp"
@@ -131,13 +144,12 @@
                     android:layout_gravity="center"
                     android:indeterminateTint="@color/indigo"
                     android:visibility="gone"/>
-
             </FrameLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Country Statistics Card -->
+    <!-- country statistics card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/statsCard"
         android:layout_width="0dp"
@@ -150,29 +162,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- container for country statistics details -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- header for country statistics -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Country Statistics"
                 style="@style/AppTextSubtitle"/>
 
+            <!-- container for stats content with overlay progress indicator -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Update the statsContent section in activity_conflict_detail.xml -->
+                <!-- stats content including population, gdp, and military expenditure -->
                 <LinearLayout
                     android:id="@+id/statsContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <!-- population stats -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -184,7 +200,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_primary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
 
                         <TextView
                             android:id="@+id/populationComparison"
@@ -192,9 +208,10 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
                     </LinearLayout>
 
+                    <!-- gdp stats -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -206,7 +223,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_primary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
 
                         <TextView
                             android:id="@+id/gdpComparison"
@@ -214,9 +231,10 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
                     </LinearLayout>
 
+                    <!-- military expenditure stats -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -228,7 +246,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/text_primary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
 
                         <TextView
                             android:id="@+id/militaryComparison"
@@ -236,10 +254,11 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:textColor="@color/text_secondary"
-                            android:fontFamily="-apple-system-thin"/>
+                            android:fontFamily="@font/helvetica_neue_thin"/>
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- progress indicator for country statistics loading -->
                 <ProgressBar
                     android:id="@+id/loadingStats"
                     android:layout_width="36dp"
@@ -247,10 +266,21 @@
                     android:layout_gravity="center"
                     android:indeterminateTint="@color/indigo"
                     android:visibility="gone"/>
-
             </FrameLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- watermark text at the bottom center -->
+    <TextView
+        android:id="@+id/watermark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ioannis Kyritsis 2025"
+        style="@style/AppTextCaption"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- large header text style -->
     <style name="AppTextLarge">
         <item name="android:textSize">34sp</item>
         <item name="android:textColor">@color/text_primary</item>
@@ -7,6 +8,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- title text style for prominent labels -->
     <style name="AppTextTitle">
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/text_primary</item>
@@ -14,6 +16,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- subtitle text style -->
     <style name="AppTextSubtitle">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/text_primary</item>
@@ -21,12 +24,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- body text style for main content -->
     <style name="AppTextBody">
         <item name="android:textSize">17sp</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:fontFamily">-apple-system</item>
     </style>
 
+    <!-- caption text style for secondary info -->
     <style name="AppTextCaption">
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/text_secondary</item>

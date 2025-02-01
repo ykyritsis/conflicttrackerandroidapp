@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.conflicttrackerandroidapp.api.ConflictEvent
 
+// adapter for regional conflicts using the shared item_conflict layout
 class RegionalConflictsAdapter(
     private val conflicts: List<ConflictEvent>,
     private val onConflictSelected: (ConflictEvent) -> Unit
@@ -20,7 +21,7 @@ class RegionalConflictsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_conflict, parent, false)  // Using existing item_conflict layout
+            .inflate(R.layout.item_conflict, parent, false)
         return ViewHolder(view)
     }
 
@@ -30,9 +31,7 @@ class RegionalConflictsAdapter(
         holder.fatalities.text = "${conflict.fatalities} casualties"
         holder.date.text = conflict.event_date
 
-        holder.itemView.setOnClickListener {
-            onConflictSelected(conflict)
-        }
+        holder.itemView.setOnClickListener { onConflictSelected(conflict) }
     }
 
     override fun getItemCount() = conflicts.size

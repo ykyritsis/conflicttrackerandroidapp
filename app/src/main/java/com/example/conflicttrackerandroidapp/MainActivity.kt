@@ -35,12 +35,12 @@ import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.gestures
 import kotlinx.coroutines.launch
 
-// Import the data class and functions from your FilterUtils.kt
+// import filter options and filter function from filterutils.kt
 import com.example.conflicttrackerandroidapp.FilterOptions
 import com.example.conflicttrackerandroidapp.filterConflicts
 
 /**
- * Extension function to convert a Drawable to Bitmap
+ * extension function to convert a drawable to bitmap
  */
 fun Drawable.toBitmap(width: Int, height: Int): Bitmap {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -51,7 +51,7 @@ fun Drawable.toBitmap(width: Int, height: Int): Bitmap {
 }
 
 /**
- * Extension function to convert dp to px
+ * extension function to convert dp to px
  */
 fun Int.dpToPx(): Int {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -64,14 +64,14 @@ class MainActivity : AppCompatActivity() {
     private val worldBankRepository = WorldBankRepository()
     private val plottedConflicts = mutableSetOf<String>()
 
-    // Current filter selections come from FilterUtils.kt
+    // current filter selections from filterutils.kt
     private var currentFilters: FilterOptions = FilterOptions()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize country codes in background, if needed
+        // initialize country codes in background
         lifecycleScope.launch {
             worldBankRepository.initializeCountryCodes()
         }
@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         mapView = findViewById(R.id.mapView)
         mapView.mapboxMap.loadStyle(Style.MAPBOX_STREETS)
 
+        // create toolbar container for filter and menu buttons
         val toolbarContainer = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = FrameLayout.LayoutParams(
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         val buttonSize = 32.dpToPx()
 
-        // Filter button
+        // filter button
         val filterButton = MaterialButton(this).apply {
             setIconResource(R.drawable.ic_filter)
             iconTint = ColorStateList.valueOf(Color.WHITE)
@@ -108,11 +109,12 @@ class MainActivity : AppCompatActivity() {
             setBackgroundResource(R.drawable.transparent_square_button_bg)
             alpha = 0.8f
             setOnClickListener {
+                // open filter dialog
                 showFilterDialog()
             }
         }
 
-        // Menu button with search functionality
+        // menu button with search functionality
         val menuButton = MaterialButton(this).apply {
             setIconResource(R.drawable.ic_menu)
             iconTint = ColorStateList.valueOf(Color.WHITE)
@@ -125,6 +127,7 @@ class MainActivity : AppCompatActivity() {
             setBackgroundResource(R.drawable.transparent_square_button_bg)
             alpha = 0.8f
             setOnClickListener {
+                // open search dialog
                 showSearchDialog()
             }
         }
@@ -132,11 +135,11 @@ class MainActivity : AppCompatActivity() {
         toolbarContainer.addView(filterButton)
         toolbarContainer.addView(menuButton)
 
-        // Add toolbar container to the map parent
+        // add toolbar container to the map parent
         val mapParent = mapView.parent as ViewGroup
         mapParent.addView(toolbarContainer)
 
-        // Center/zoom the map
+        // center and zoom the map
         mapView.mapboxMap.setCamera(
             CameraOptions.Builder()
                 .center(Point.fromLngLat(0.0, 20.0))
@@ -144,30 +147,31 @@ class MainActivity : AppCompatActivity() {
                 .build()
         )
 
-        // Enable gestures
+        // enable map gestures
         mapView.gestures.pinchToZoomEnabled = true
         mapView.gestures.doubleTapToZoomInEnabled = true
         mapView.gestures.doubleTouchToZoomOutEnabled = true
 
+        // add zoom controls and legend to map
         addMapControls()
 
-        // Setup watchlist RecyclerView
+        // setup watchlist recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        // Load initial data
+        // load initial conflict data
         loadConflictData()
     }
 
     /**
-     * Add zoom buttons and legend to the map.
+     * adds zoom buttons and legend overlay to the map
      */
     private fun addMapControls() {
         val mapParent = mapView.parent as ViewGroup
         val buttonSize = 32.dpToPx()
 
-        // Zoom controls container
+        // container for zoom buttons
         val zoomButtonsContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = FrameLayout.LayoutParams(
@@ -180,7 +184,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Zoom in
+        // zoom in button
         val zoomInButton = MaterialButton(this).apply {
             text = "+"
             textSize = 18f
@@ -196,6 +200,7 @@ class MainActivity : AppCompatActivity() {
             setTextColor(Color.WHITE)
             setPadding(0, 0, 0, 0)
             setOnClickListener {
+                // increase zoom level by 1
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
                     CameraOptions.Builder()
@@ -205,7 +210,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Zoom out
+        // zoom out button
         val zoomOutButton = MaterialButton(this).apply {
             text = "−"
             textSize = 18f
@@ -219,6 +224,7 @@ class MainActivity : AppCompatActivity() {
             setTextColor(Color.WHITE)
             setPadding(0, 0, 0, 0)
             setOnClickListener {
+                // decrease zoom level by 1
                 val currentZoom = mapView.mapboxMap.cameraState.zoom
                 mapView.mapboxMap.setCamera(
                     CameraOptions.Builder()
@@ -232,7 +238,7 @@ class MainActivity : AppCompatActivity() {
         zoomButtonsContainer.addView(zoomOutButton)
         mapParent.addView(zoomButtonsContainer)
 
-        // Legend
+        // legend container
         val legendContainer = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             background = ResourcesCompat.getDrawable(resources, R.drawable.legend_background, theme)
@@ -246,11 +252,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // legend content with marker info
         val legendContent = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(12.dpToPx(), 8.dpToPx(), 12.dpToPx(), 8.dpToPx())
         }
 
+        // add legend items
         listOf(
             Triple(R.drawable.marker_severe, "20+", "#FF4444"),
             Triple(R.drawable.marker_regular, "10-20", "#FFA500"),
@@ -266,14 +274,12 @@ class MainActivity : AppCompatActivity() {
                     ).apply {
                         bottomMargin = 4.dpToPx()
                     }
-
                     addView(ImageView(context).apply {
                         setImageResource(icon)
                         layoutParams = LinearLayout.LayoutParams(12.dpToPx(), 12.dpToPx()).apply {
                             marginEnd = 8.dpToPx()
                         }
                     })
-
                     addView(TextView(context).apply {
                         text = range
                         setTextColor(Color.parseColor(color))
@@ -286,7 +292,6 @@ class MainActivity : AppCompatActivity() {
                             marginEnd = 4.dpToPx()
                         }
                     })
-
                     addView(TextView(context).apply {
                         text = "casualties"
                         setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
@@ -302,9 +307,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Loads conflict data, applies filters, updates UI.
+     * loads conflict data, applies filters, and updates the ui
      */
     private fun loadConflictData() {
+        // show progress indicators
         findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.VISIBLE
         findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.VISIBLE
         findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.GONE
@@ -312,65 +318,63 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // 1) Load the "most severe" conflict
+                // load the most severe conflict
                 val severeConflict = repository.getMostSevereRecentConflict()
 
-                // 2) Load the "top ongoing" conflicts
+                // load top ongoing conflicts
                 val allConflicts = repository.getTopOngoingConflicts()
 
-                // Log for debugging
-                Log.d("MainActivity", "allConflicts size: ${allConflicts.size}")
+                // log size for debugging
+                Log.d("MainActivity", "allconflicts size: ${allConflicts.size}")
 
-                // 2a) Apply the current filters (from FilterUtils.kt)
+                // apply current filters
                 val filteredConflicts = filterConflicts(allConflicts, currentFilters)
-                Log.d("MainActivity", "filteredConflicts size: ${filteredConflicts.size}")
+                Log.d("MainActivity", "filteredconflicts size: ${filteredConflicts.size}")
 
-                // -- Update Escalation Card --
+                // update escalating card if a severe conflict is found
                 severeConflict?.let {
-                    Log.d("MainActivity", "severeConflict: ${it.country}, ${it.fatalities} fatalities")
+                    Log.d("MainActivity", "severe conflict: ${it.country}, ${it.fatalities} fatalities")
                     updateEscalatingCard(it)
-
-                    // If you want the severe conflict to always show on the map:
+                    // add marker for severe conflict on map
                     addConflictMarker(it, true)
-
                     findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
                     findViewById<LinearLayout>(R.id.escalatingContent).visibility = View.VISIBLE
                 } ?: run {
-                    Log.d("MainActivity", "severeConflict is null; no escalations to show.")
+                    Log.d("MainActivity", "severe conflict is null; no escalations to show.")
                     findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
                 }
 
-                // -- Watchlist with top 5 filtered conflicts (or unfiltered if you prefer) --
+                // update watchlist with top 5 filtered conflicts
                 val topFiveConflicts = filteredConflicts.take(5)
-                Log.d("MainActivity", "topFiveConflicts size: ${topFiveConflicts.size}")
+                Log.d("MainActivity", "topfiveconflicts size: ${topFiveConflicts.size}")
                 updateWatchlistCard(topFiveConflicts)
                 findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
                 findViewById<LinearLayout>(R.id.watchlistContent).visibility = View.VISIBLE
 
-                // -- Plot up to 150 map markers from the filtered list --
+                // plot up to 150 map markers from filtered conflicts
                 filteredConflicts.take(150).forEach { conflict ->
-                    Log.d("MainActivity", "Plotting marker: ${conflict.country}, ID: ${conflict.event_id_cnty}")
+                    Log.d("MainActivity", "plotting marker: ${conflict.country}, id: ${conflict.event_id_cnty}")
                     addConflictMarker(conflict, false)
                 }
 
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error loading data", e)
+                Log.e("MainActivity", "error loading data", e)
                 findViewById<ProgressBar>(R.id.escalatingProgress).visibility = View.GONE
                 findViewById<ProgressBar>(R.id.watchlistProgress).visibility = View.GONE
-                Toast.makeText(this@MainActivity, "Error loading data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "error loading data", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     /**
-     * Updates the "Escalating Card" with the severe conflict details.
+     * updates the escalating card with severe conflict details
      */
     private fun updateEscalatingCard(conflict: ConflictEvent) {
         findViewById<TextView>(R.id.escalatingLocation).text = "${conflict.country} - ${conflict.event_type}"
         findViewById<TextView>(R.id.escalatingFatalities).text = "${conflict.fatalities} casualties"
-        findViewById<TextView>(R.id.escalatingDate).text = "Event Date: ${conflict.event_date}"
-
+        findViewById<TextView>(R.id.escalatingDate).text = "event date: ${conflict.event_date}"
         findViewById<MaterialButton>(R.id.escalatingReadMore).setOnClickListener {
+            // open escalating conflict activity with conflict details
             val intent = Intent(this, EscalatingConflictActivity::class.java)
             intent.putExtra("conflict", conflict)
             startActivity(intent)
@@ -378,32 +382,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Opens a dialog so the user can modify filter selections, then applies them.
+     * shows a dialog to modify filter selections and applies them
      */
     private fun showFilterDialog() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_filter)
 
-        // Initialize spinners
+        // initialize filter spinners
         val regionSpinner = dialog.findViewById<Spinner>(R.id.regionSpinner)
         val severitySpinner = dialog.findViewById<Spinner>(R.id.severitySpinner)
         val eventTypeSpinner = dialog.findViewById<Spinner>(R.id.eventTypeSpinner)
         val timeframeSpinner = dialog.findViewById<Spinner>(R.id.timeframeSpinner)
 
-        // Set up adapters
+        // setup spinner adapters
         val regions = arrayOf("All Regions", "Africa", "Middle East", "Asia", "Europe", "Americas")
         regionSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, regions)
-
         val severityLevels = arrayOf("All Severities", "High (20+ casualties)", "Medium (10-20 casualties)", "Low (<10 casualties)")
         severitySpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, severityLevels)
-
         val eventTypes = arrayOf("All Events", "Battles", "Violence against civilians", "Protests", "Riots")
         eventTypeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, eventTypes)
-
         val timeframes = arrayOf("All Time", "Last Week", "Last Month", "Last 3 Months")
         timeframeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, timeframes)
 
-        // Set the spinner selections based on currentFilters
+        // set spinner selections based on current filters
         currentFilters.region?.let { region ->
             val idx = regions.indexOf(region)
             if (idx != -1) regionSpinner.setSelection(idx)
@@ -421,7 +422,7 @@ class MainActivity : AppCompatActivity() {
             if (idx != -1) timeframeSpinner.setSelection(idx)
         }
 
-        // Handle Reset/Apply
+        // reset button to clear selections
         dialog.findViewById<Button>(R.id.resetButton).setOnClickListener {
             regionSpinner.setSelection(0)
             severitySpinner.setSelection(0)
@@ -429,6 +430,7 @@ class MainActivity : AppCompatActivity() {
             timeframeSpinner.setSelection(0)
         }
 
+        // apply button to update filters and reload data
         dialog.findViewById<Button>(R.id.applyButton).setOnClickListener {
             currentFilters = FilterOptions(
                 region = if (regionSpinner.selectedItemPosition == 0) null else regionSpinner.selectedItem.toString(),
@@ -444,7 +446,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Clears existing markers, re-loads data (with newly updated filters).
+     * clears existing markers and reloads data with updated filters
      */
     private fun applyFilters() {
         mapView.annotations.cleanup()
@@ -453,7 +455,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Updates the watchlist RecyclerView with the provided conflicts.
+     * updates the watchlist recycler view with conflict items
      */
     private fun updateWatchlistCard(conflicts: List<ConflictEvent>) {
         val recyclerView = findViewById<RecyclerView>(R.id.watchlistRecyclerView)
@@ -465,16 +467,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Places a marker on the map for the given conflict, if not already placed.
+     * places a marker on the map for a conflict if not already plotted
      */
     private fun addConflictMarker(conflict: ConflictEvent, isMainConflict: Boolean) {
-        // If we've already placed a marker for this conflict, skip
+        // skip if marker already exists for this conflict
         if (plottedConflicts.contains(conflict.event_id_cnty)) {
             return
         }
 
         val pointAnnotationManager = mapView.annotations.createPointAnnotationManager()
 
+        // select marker drawable based on conflict severity or if main conflict
         val markerDrawable = when {
             isMainConflict -> resources.getDrawable(R.drawable.marker_severe, theme)
             conflict.fatalities >= 20 -> resources.getDrawable(R.drawable.marker_severe, theme)
@@ -493,7 +496,7 @@ class MainActivity : AppCompatActivity() {
 
         val annotation = pointAnnotationManager.create(pointAnnotationOptions)
 
-        // Click handler for the marker
+        // set click listener for marker to open conflict detail activity
         pointAnnotationManager.addClickListener { clickedAnnotation ->
             if (clickedAnnotation == annotation) {
                 val intent = Intent(this, ConflictDetailActivity::class.java)
@@ -507,7 +510,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Shows a search dialog to allow the user to search for a conflict by country or event ID.
+     * shows a search dialog for conflict lookup by country or event id
      */
     private fun showSearchDialog() {
         val dialog = Dialog(this)
@@ -522,7 +525,7 @@ class MainActivity : AppCompatActivity() {
                 searchConflict(query)
                 dialog.dismiss()
             } else {
-                Toast.makeText(this, "Please enter a search term", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "please enter a search term", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -530,7 +533,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Searches for a conflict by country or event ID and navigates to it on the map.
+     * searches for a conflict and navigates the map to its location if found
      */
     private fun searchConflict(query: String) {
         lifecycleScope.launch {
@@ -541,27 +544,26 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if (conflict != null) {
-                    // Move the map camera to the conflict location
+                    // move map camera to conflict location
                     mapView.mapboxMap.setCamera(
                         CameraOptions.Builder()
                             .center(Point.fromLngLat(conflict.longitude, conflict.latitude))
-                            .zoom(10.0) // Adjust the zoom level as needed
+                            .zoom(10.0) // adjust zoom level as needed
                             .build()
                     )
-
-                    // Optionally, add a marker for the conflict
+                    // optionally add marker for conflict
                     addConflictMarker(conflict, true)
                 } else {
-                    Toast.makeText(this@MainActivity, "Conflict not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "conflict not found", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error searching for conflict", e)
-                Toast.makeText(this@MainActivity, "Error searching for conflict", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "error searching for conflict", e)
+                Toast.makeText(this@MainActivity, "error searching for conflict", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Mapbox lifecycle
+    // mapbox lifecycle methods
     override fun onStart() {
         super.onStart()
         mapView.onStart()
