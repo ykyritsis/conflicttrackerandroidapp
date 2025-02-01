@@ -18,8 +18,6 @@ interface AcledApiService {
     ): AcledResponse
 
     companion object {
-        // max results per page as per api limitations
-        const val MAX_PAGE_SIZE = 500
         // default page number for pagination
         const val DEFAULT_PAGE = 1
     }

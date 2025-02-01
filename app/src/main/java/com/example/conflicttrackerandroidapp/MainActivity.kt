@@ -35,10 +35,6 @@ import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.gestures
 import kotlinx.coroutines.launch
 
-// import filter options and filter function from filterutils.kt
-import com.example.conflicttrackerandroidapp.FilterOptions
-import com.example.conflicttrackerandroidapp.filterConflicts
-
 /**
  * extension function to convert a drawable to bitmap
  */
@@ -561,22 +557,5 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "error searching for conflict", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    // mapbox lifecycle methods
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-    }
-
-    override fun onDestroy() {
-        plottedConflicts.clear()
-        super.onDestroy()
-        mapView.onDestroy()
     }
 }

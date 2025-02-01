@@ -26,14 +26,6 @@ data class ConflictEvent(
     val fatalities: Int
 ) : Parcelable
 
-// filter options for conflict queries
-data class FilterOptions(
-    var region: String? = null,
-    var severityLevel: String? = null,
-    var eventType: String? = null,
-    var timeframe: String? = null
-)
-
 // country statistics with comparison helpers
 data class CountryStats(
     val population: Double?,
